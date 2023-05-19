@@ -19,28 +19,33 @@ class MicRecorder:
 
     def __init__(self):
         pass
+        
+    def open(self):
+        self.stream = self.audio.open(format=self.FORMAT, channels=self.CHANNELS,
+                                 rate=self.RATE, input=True,
+                                 frames_per_buffer=self.CHUNK)
+                                 
+    def close(self):
+        self.stream.close()
+        self.audio.terminate()
 
     def rec(self, record_seconds=None):
         if record_seconds is None:
             record_seconds = self.record_seconds
 
         # start Recording
-        stream = self.audio.open(format=self.FORMAT, channels=self.CHANNELS,
-                                 rate=self.RATE, input=True,
-                                 frames_per_buffer=self.CHUNK)
-        print("recording...")
+        self.stream.start_stream()
+        
         self.last_recording = []
 
         # Record for record_seconds
         for i in range(0, int(self.RATE / self.CHUNK * record_seconds)):
-            data = stream.read(self.CHUNK)
+            data = self.stream.read(self.CHUNK)
             self.last_recording.append(data)
-        print("finished recording")
 
         # Stop Recording
-        stream.stop_stream()
-        stream.close()
-        self.audio.terminate()
+        self.stream.stop_stream()
+
 
     def output_file(self, frames=None):
         if frames is None:
