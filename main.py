@@ -1,6 +1,7 @@
 from MicRecorder import MicRecorder
 from ChordDecoder import ChordDecoder
 from SequenceDetector import SequenceDetector
+from OutputDriver import OutputDriver
 
 # script params ----------------------------------------
 
@@ -15,7 +16,7 @@ alternatives = "Dm, Am, Em, Gm, Bm, Em".split(", ")
 recorder = MicRecorder()
 decoder = ChordDecoder()
 seqdec = SequenceDetector()
-#out = OutputDriver()
+out = OutputDriver(total_leds=len(chords_sequence))
 
 recorder.record_seconds = record_seconds
 
@@ -44,6 +45,10 @@ while True:
     
     
     seqdec.analyze(raw_chords)
+
+    for i, match in enumerate(seqdec.matches):
+        out.leds[i].state = match
+
 
     #if seqdec.detected:
         #out.toggle()
